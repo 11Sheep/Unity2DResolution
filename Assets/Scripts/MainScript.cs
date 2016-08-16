@@ -17,7 +17,8 @@ using UnityEngine.UI;
 // 
 // 800x1280 - 10:16
 
-public class MainScript : MonoBehaviour {
+public class MainScript : MonoBehaviour
+{
 
     private Dropdown mGameBKDropdown;
     private Dropdown mDeviceDropdown;
@@ -31,20 +32,20 @@ public class MainScript : MonoBehaviour {
 
     private List<BackgroundPicture> mLandscapeBackgroundsList = new List<BackgroundPicture>
     {
-        new BackgroundPicture() { isLandscape = true, dislayName = "960x640 (3:2)", resourceName = "bk/landsscape_960x640_bk", ratio = (3f/2f); },
-        new BackgroundPicture() { isLandscape = true, dislayName = "1024x600 (17:10)", resourceName = "bk/landsscape_1024x600_bk", rat },
-        new BackgroundPicture() { isLandscape = true, dislayName = "1024x768 (4:3)", resourceName = "bk/landsscape_1024x768_bk" },
-        new BackgroundPicture() { isLandscape = true, dislayName = "1280x800 (16:10)", resourceName = "bk/landsscape_1280x800_bk" },
-        new BackgroundPicture() { isLandscape = true, dislayName = "1920x1080 (16:9)", resourceName = "bk/landsscape_1920x1080_bk" }
+        new BackgroundPicture() { isLandscape = true, dislayName = "960x640 (3:2)", resourceName = "bk/landsscape_960x640_bk", ratio = (3f/2f) },
+        new BackgroundPicture() { isLandscape = true, dislayName = "1024x600 (17:10)", resourceName = "bk/landsscape_1024x600_bk", ratio = (17f/10f) },
+        new BackgroundPicture() { isLandscape = true, dislayName = "1024x768 (4:3)", resourceName = "bk/landsscape_1024x768_bk" , ratio = (4f/3f) },
+        new BackgroundPicture() { isLandscape = true, dislayName = "1280x800 (16:10)", resourceName = "bk/landsscape_1280x800_bk", ratio = (16f/10f) },
+        new BackgroundPicture() { isLandscape = true, dislayName = "1920x1080 (16:9)", resourceName = "bk/landsscape_1920x1080_bk", ratio = (16f/9f) }
     };
 
     private List<BackgroundPicture> mPortraitBackgroundsList = new List<BackgroundPicture>
     {
-        new BackgroundPicture() { isLandscape = false, dislayName = "640x960 (2:3)", resourceName = "bk/portrait_640x960_bk" },
-        new BackgroundPicture() { isLandscape = false, dislayName = "600x1024 (10:17)", resourceName = "bk/portrait_600x1024_bk" },
-        new BackgroundPicture() { isLandscape = false, dislayName = "768x1024 (3:4)", resourceName = "bk/portrait_768x1024_bk" },
-        new BackgroundPicture() { isLandscape = false, dislayName = "1800x1280 (10:16)", resourceName = "bk/portrait_800x1280_bk" },
-        new BackgroundPicture() { isLandscape = false, dislayName = "1080x1920 (9:16)", resourceName = "bk/portrait_1080x1920_bk" }
+        new BackgroundPicture() { isLandscape = false, dislayName = "640x960 (2:3)", resourceName = "bk/portrait_640x960_bk", ratio = (2f/3f) },
+        new BackgroundPicture() { isLandscape = false, dislayName = "600x1024 (10:17)", resourceName = "bk/portrait_600x1024_bk", ratio = (10f/17f) },
+        new BackgroundPicture() { isLandscape = false, dislayName = "768x1024 (3:4)", resourceName = "bk/portrait_768x1024_bk", ratio = (3f/4f) },
+        new BackgroundPicture() { isLandscape = false, dislayName = "1800x1280 (10:16)", resourceName = "bk/portrait_800x1280_bk", ratio = (10f/16f) },
+        new BackgroundPicture() { isLandscape = false, dislayName = "1080x1920 (9:16)", resourceName = "bk/portrait_1080x1920_bk", ratio = (9f/16f) }
     };
 
     private List<PhoneDetails> mPhoneDetailsList = new List<PhoneDetails>
@@ -55,7 +56,8 @@ public class MainScript : MonoBehaviour {
 
     // x:113, y:35   w:762,h:584
 
-    void Start () {
+    void Start()
+    {
         mDemoGame = GameObject.Find("DemoGame");
         mDemoGameSpriteRenderer = mDemoGame.GetComponent<SpriteRenderer>();
         mDeviceFrame = GameObject.Find("DeviceFrame");
@@ -88,11 +90,17 @@ public class MainScript : MonoBehaviour {
         OnBackgroundImageValueChange(0);
 
     }
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    public void OnFitToGameValueChange(bool isOn)
+    {
+        FitGameToFrame();
+    }
 
     public void OnBackgroundImageValueChange(int newValue)
     {
@@ -184,9 +192,6 @@ public class MainScript : MonoBehaviour {
 
         mDemoGame.transform.localScale = Vector2.one;
 
-        float frameX = mDeviceFrame.GetComponent<SpriteRenderer>().bounds.size.x;
-        float frameY = mDeviceFrame.GetComponent<SpriteRenderer>().bounds.size.y;
-
         float demoGameWidth = mDemoGameSpriteRenderer.bounds.size.x;
         float demoGameHeight = mDemoGameSpriteRenderer.bounds.size.y;
 
@@ -202,13 +207,19 @@ public class MainScript : MonoBehaviour {
         {
             if (isInLandscape)
             {
-                xScale = ((isInLandscape ? mCurrentDevice.width : mCurrentDevice.height) / 100f) / demoGameWidth;
-                mLandscapeBackgroundsList[mGameBKDropdown.value].;
+                xScale = (mCurrentDevice.width / 100f) / demoGameWidth;
+                float widthSize = mDemoGameSpriteRenderer.bounds.size.x * xScale;
+                float newHeightSize = widthSize / mLandscapeBackgroundsList[mGameBKDropdown.value].ratio;
+                float currentHeightSize = mDemoGameSpriteRenderer.bounds.size.y;
+                yScale = newHeightSize / currentHeightSize;
             }
             else
             {
-                yScale = ((isInLandscape ? mCurrentDevice.height : mCurrentDevice.width) / 100f) / demoGameHeight;
-                xScale = 1;
+                yScale = (mCurrentDevice.width / 100f) / demoGameHeight;
+                float heightSize = mDemoGameSpriteRenderer.bounds.size.y * yScale;
+                float newWidthSize = heightSize * mPortraitBackgroundsList[mGameBKDropdown.value].ratio;
+                float currentWidthSize = mDemoGameSpriteRenderer.bounds.size.x;
+                xScale = newWidthSize / currentWidthSize;
             }
         }
 
