@@ -241,6 +241,12 @@ public class MainScript : MonoBehaviour
         mJumpingBall.transform.localScale = new Vector2(mJumpingBallScaleX, mJumpingBallScaleX);
     }
 
+
+    public void GoToSite()
+    {
+        Application.OpenURL("http://www.11sheep.com/wsite/");
+    }
+
     class BackgroundPicture
     {
         public bool isLandscape;
